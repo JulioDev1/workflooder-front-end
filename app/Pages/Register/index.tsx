@@ -5,6 +5,9 @@ import Email from "@/app/icons/Email";
 import Password from "@/app/icons/Password";
 import User from "@/app/icons/User";
 import Work from "@/app/icons/Work";
+import { UserRegister } from "@/app/models/User";
+import { registerForm } from "@/app/services/api/authentication";
+import { useMutation } from "@tanstack/react-query";
 import { Roboto } from "next/font/google";
 import { useForm } from "react-hook-form";
 
@@ -13,18 +16,42 @@ const robotoExtraBold = Roboto({ weight: "900", subsets: ["latin"] });
 
 type FormValues = {
   name: string;
-  mail: string;
+  email: string;
   password: string;
   repeatPassword: string;
   cellphone: string;
-  actRole: string;
-  job: string;
+  role: string;
+  act_area: string;
 };
+
 export default function Register() {
   const { register, handleSubmit } = useForm<FormValues>();
 
-  const onSubmit = handleSubmit((data) => {
-    console.log(data);
+  const addData = useMutation({
+    mutationFn: async (data: UserRegister) => {
+      try {
+        await registerForm(data);
+      } catch (error) {
+        throw error;
+      }
+    },
+  });
+
+  const onSubmit = handleSubmit((data: FormValues) => {
+    const dd = data.cellphone.slice(0, 2);
+
+    const number = data.cellphone.slice(2, data.cellphone.length);
+
+    const dataToSend = {
+      name: data.name,
+      email: data.email,
+      password: data.password,
+      number: [{ ddd: dd, number: number }],
+      role: data.role,
+      act_area: data.act_area,
+    };
+
+    console.log(dataToSend);
   });
 
   return (
@@ -54,7 +81,7 @@ export default function Register() {
         <Input
           icons={<Email />}
           type="text"
-          {...register("mail", { required: true })}
+          {...register("email", { required: true })}
         />
         <Input
           icons={<Password />}
@@ -77,13 +104,13 @@ export default function Register() {
           icons={<Work />}
           type="text"
           placeholder="Digite seu area de atuação"
-          {...register("actRole", { required: true })}
+          {...register("role", { required: true })}
         />
         <Input
           icons={<Work />}
           type="text"
           placeholder="Digite o cargo desejado"
-          {...register("job", { required: true })}
+          {...register("act_area", { required: true })}
         />
 
         <Button />
