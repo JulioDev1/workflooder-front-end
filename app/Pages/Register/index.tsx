@@ -5,12 +5,10 @@ import Email from "@/app/icons/Email";
 import Password from "@/app/icons/Password";
 import User from "@/app/icons/User";
 import Work from "@/app/icons/Work";
-import { UserRegister } from "@/app/models/User";
-import { registerForm } from "@/app/services/api/authentication";
-import { useMutation } from "@tanstack/react-query";
+import authentication from "@/app/services/api/authentication";
+// import { registerForm } from "@/app/services/api/authentication";
 import { Roboto } from "next/font/google";
 import { useForm } from "react-hook-form";
-
 const roboto = Roboto({ weight: "500", subsets: ["latin"] });
 const robotoExtraBold = Roboto({ weight: "900", subsets: ["latin"] });
 
@@ -18,41 +16,55 @@ type FormValues = {
   name: string;
   email: string;
   password: string;
-  repeatPassword: string;
-  cellphone: string;
-  role: string;
+  // repeatPassword?: string;
+  number: [{ ddd: string; number: string }];
   act_area: string;
+  role: string;
 };
 
 export default function Register() {
-  const { register, handleSubmit } = useForm<FormValues>();
+  const { register, handleSubmit, getValues } = useForm<FormValues>();
 
-  const addData = useMutation({
-    mutationFn: async (data: UserRegister) => {
-      try {
-        await registerForm(data);
-      } catch (error) {
-        throw error;
+  // const addData = useMutation({
+  //   mutationFn: async (data: UserRegister) => {
+  //     console.log(data);
+  //     try {
+  //       await registerForm(data);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   },
+  // });
+
+  // const onSubmit = handleSubmit(async (data: FormValues) => {
+  //   const dataToSend = {
+  //     name: data.name,
+  //     email: data.email,
+  //     password: data.password,
+  //     number: [{ ddd: data.number[0].dd, number: data.number[0].number }],
+  //     act_area: data.act_area,
+  //     role: data.role,
+  //   };
+  //   try {
+  //     await addData.mutate(dataToSend);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // });
+
+  async function onSubmit(e: any) {
+    e.preventDefault();
+    console.log(getValues());
+    try {
+      const resp = await authentication.cadastro(getValues());
+
+      if (resp) {
+        console.log(resp);
       }
-    },
-  });
-
-  const onSubmit = handleSubmit((data: FormValues) => {
-    const dd = data.cellphone.slice(0, 2);
-
-    const number = data.cellphone.slice(2, data.cellphone.length);
-
-    const dataToSend = {
-      name: data.name,
-      email: data.email,
-      password: data.password,
-      number: [{ ddd: dd, number: number }],
-      role: data.role,
-      act_area: data.act_area,
-    };
-
-    console.log(dataToSend);
-  });
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <form
@@ -89,16 +101,22 @@ export default function Register() {
           placeholder="Digite seu Password"
           {...register("password", { required: true })}
         />
-        <Input
+        {/* <Input
           icons={<Password />}
           type="password"
           placeholder="Digite seu Password"
           {...register("repeatPassword", { required: true })}
-        />
+        /> */}
         <Input
           type="text"
-          placeholder="Digite seu Numero"
-          {...register("cellphone", { required: true })}
+          placeholder="Digite seu ddd"
+          {...register("number.0.ddd", { required: true })}
+        />
+
+        <Input
+          type="text"
+          placeholder="Digite seu numero"
+          {...register("number.0.number", { required: true })}
         />
         <Input
           icons={<Work />}
