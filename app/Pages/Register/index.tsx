@@ -5,8 +5,9 @@ import Email from "@/app/icons/Email";
 import Password from "@/app/icons/Password";
 import User from "@/app/icons/User";
 import Work from "@/app/icons/Work";
-import authentication from "@/app/services/api/authentication";
-// import { registerForm } from "@/app/services/api/authentication";
+import { UserRegister } from "@/app/models/User";
+import { registerForm } from "@/app/services/api/authentication";
+import { useMutation } from "@tanstack/react-query";
 import { Roboto } from "next/font/google";
 import { useForm } from "react-hook-form";
 const roboto = Roboto({ weight: "500", subsets: ["latin"] });
@@ -23,49 +24,25 @@ type FormValues = {
 };
 
 export default function Register() {
-  const { register, handleSubmit, getValues } = useForm<FormValues>();
+  const { register, handleSubmit } = useForm<FormValues>();
 
-  // const addData = useMutation({
-  //   mutationFn: async (data: UserRegister) => {
-  //     console.log(data);
-  //     try {
-  //       await registerForm(data);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   },
-  // });
-
-  // const onSubmit = handleSubmit(async (data: FormValues) => {
-  //   const dataToSend = {
-  //     name: data.name,
-  //     email: data.email,
-  //     password: data.password,
-  //     number: [{ ddd: data.number[0].dd, number: data.number[0].number }],
-  //     act_area: data.act_area,
-  //     role: data.role,
-  //   };
-  //   try {
-  //     await addData.mutate(dataToSend);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // });
-
-  async function onSubmit(e: any) {
-    e.preventDefault();
-    console.log(getValues());
-    try {
-      const resp = await authentication.cadastro(getValues());
-
-      if (resp) {
-        console.log(resp);
+  const addData = useMutation({
+    mutationFn: async (data: UserRegister) => {
+      try {
+        await registerForm(data);
+      } catch (error) {
+        console.log(error);
       }
+    },
+  });
+
+  const onSubmit = handleSubmit(async (data: FormValues) => {
+    try {
+      await addData.mutate(data);
     } catch (error) {
       console.log(error);
     }
-  }
-
+  });
   return (
     <form
       onSubmit={onSubmit}
