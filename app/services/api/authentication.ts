@@ -8,8 +8,9 @@ export const registerForm = async (data: UserRegister) => {
 
 export const authenticationForm = async (data: UserAuthentication) => {
   try {
-    const response = await api(false).post("/authenticate-user", data);
-    console.log(response);
+    const response = await api(true).post("/authenticate-user", data);
+
+    return response;
   } catch (error) {
     console.log(error);
   }

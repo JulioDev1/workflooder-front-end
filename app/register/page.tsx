@@ -116,7 +116,7 @@ export default function Register() {
           {...register("act_area", { required: true })}
         />
         {hasError ? <div className="w-full ">{error}</div> : null}
-        <Button />
+        <Button box="Registrar-se" />
         <div className="flex w-full">
           <p className="flex bg-transparent">
             <Link className="text-violet-700 cursor-pointer" href="/login">

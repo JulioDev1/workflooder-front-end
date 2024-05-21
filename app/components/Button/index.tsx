@@ -1,7 +1,10 @@
-export default function Button() {
+type InputBox = {
+  box: string;
+};
+export default function Button({ box }: InputBox) {
   return (
-    <button className="bg-black text-white text-xl w-full h-14 rounded-lg">
-      Registrar-se
+    <button className="  text-white bg-black text-xl w-full h-14 rounded-lg">
+      {box}
     </button>
   );
 }

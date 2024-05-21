@@ -6,8 +6,13 @@ export default function api(isAuth = false): any {
   };
   if (isAuth) {
     try {
-      const tokens: any = localStorage.getItem("token");
-      headers.Authorization = `Bearer ${JSON.parse(tokens)}`;
+      axios.interceptors.request.use((config) => {
+        const tokens: any = localStorage.getItem("token");
+        if (tokens) {
+          config.headers.Authorization = `Bearer ${JSON.parse(tokens)}`;
+        }
+        return config;
+      });
     } catch (error) {
       console.log(error);
     }
