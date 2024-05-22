@@ -9,7 +9,7 @@ export default function api(isAuth = false): any {
       axios.interceptors.request.use((config) => {
         const tokens: any = localStorage.getItem("token");
         if (tokens) {
-          config.headers.Authorization = `Bearer ${JSON.parse(tokens)}`;
+          config.headers.Authorization = `Bearer ${JSON.stringify(tokens)}`;
         }
         return config;
       });
